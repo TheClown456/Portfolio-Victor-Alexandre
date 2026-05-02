@@ -34,7 +34,6 @@ const projects = [
     {src: "images/watch.jpg", label: "Post Feed — Watch" }
   ]
 },
-
 {
   id: 3,
   title: "InterOuro — Ofertas Diretas",
@@ -131,27 +130,21 @@ const projects = [
 },
 {
   id: 9,
-  title: "Interouro — Website Institucional",
-  category: "branding",
-  categoryLabel: "Web Design & Desenvolvimento",
-  description: "Desenvolvimento completo do novo site da Interouro, desde o design até a programação. Projeto focado em conversão, com estrutura estratégica direcionando o usuário para contato via WhatsApp. Interface moderna, responsiva e otimizada para destacar planos, facilitar a navegação e gerar leads qualificados.",
+  title: "Interouro — Motion & Animação",
+  category: "ads",
+  categoryLabel: "Motion Design",
+  description: "Peças animadas desenvolvidas para diferentes mídias e momentos da Interouro, incluindo outdoor digital, campanhas de tráfego pago e Reels. Cada vídeo foi criado com linguagem visual adaptada ao canal, combinando movimento, tipografia e identidade da marca para maximizar impacto e retenção.",
   client: "Interouro Telecom",
-  year: "2026",
-  platform: "Website",
-  colorClass: "p9",
+  year: "2025",
+  platform: "Outdoor Digital / Tráfego Pago / Reels",
+  colorClass: "p1",
   images: [
-    {src: "images/site1.png", label: "Hero e proposta de valor" },
-    {src: "images/site2.png", label: "Seção de planos e conversão" },
-    {src: "images/site3.png", label: "Verificação de viabilidade" },
-    {src: "images/site4.png", label: "Prova social e diferenciais" },
-    {src: "images/site5.png", label: "FAQ e fechamento de conversão" }
+    { src: "videos/black-animado.mp4", label: "Campanha Black — Animação", type: "video" },
+    { src: "videos/ad-animado-mp4.mp4", label: "Ad Animado — Tráfego Pago", type: "video" },
+    { src: "videos/outdoor-10anos-cabanas.mov", label: "Outdoor Digital — 10 Anos Cabanas", type: "video" },
+    { src: "videos/outdoor-cabanas.mov", label: "Outdoor Digital — Cabanas", type: "video" }
   ]
 },
-  
-  
-  
-  
-
 ];
 
 const clients = [
@@ -165,15 +158,42 @@ const clients = [
   { name: "Sabor & Arte", init: "SA" },
 ];
 
-// ===== RENDER PLACEHOLDER IMAGE =====
-function renderImageOrPlaceholder(imageObj, minHeight = '180px') {
-  if (imageObj.src) {
-    // Se for lightbox, adiciona classe lb-img
-    const isLightbox = minHeight === '420px';
-    return `<img src="${imageObj.src}" alt="${imageObj.label}" class="${isLightbox ? 'lb-img' : ''}" style="min-height:${minHeight};width:100%;${isLightbox ? '' : 'object-fit:cover;'}border-radius:var(--radius-lg);">`;
+// ===== RENDER PLACEHOLDER / IMAGE / VIDEO =====
+function renderImageOrPlaceholder(imageObj, context) {
+  // context: 'card' | 'lightbox'
+  const isLightbox = context === 'lightbox';
+  const isVideo = imageObj.type === 'video';
+
+  if (imageObj.src && isVideo) {
+    if (isLightbox) {
+      return `<video
+        src="${imageObj.src}"
+        class="lb-img"
+        style="background:#000;"
+        controls
+        preload="metadata"
+        playsinline
+        webkit-playsinline
+      ></video>`;
+    } else {
+      // Card thumbnail: no controls, just poster from first frame
+      return `<video
+        src="${imageObj.src}"
+        style="width:100%;height:100%;object-fit:cover;min-height:180px;background:#000;display:block;"
+        preload="metadata"
+        playsinline
+        muted
+      ></video>`;
+    }
+  } else if (imageObj.src) {
+    if (isLightbox) {
+      return `<img src="${imageObj.src}" alt="${imageObj.label}" class="lb-img">`;
+    } else {
+      return `<img src="${imageObj.src}" alt="${imageObj.label}" style="width:100%;height:100%;object-fit:cover;min-height:180px;display:block;">`;
+    }
   } else {
     return `
-      <div class="img-placeholder ${imageObj.color || ''}" style="min-height:${minHeight}">
+      <div class="img-placeholder ${imageObj.color || ''}" style="${isLightbox ? 'min-height:320px;' : 'min-height:180px;'}">
         <div class="img-placeholder-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -200,14 +220,11 @@ function renderProjects(filter = 'all') {
     card.dataset.id = p.id;
     card.dataset.category = p.category;
 
-    const hasMultiple = p.images.length > 1;
     const firstImg = p.images[0];
-    const minH = i === 0 ? '360px' : '180px';
 
     card.innerHTML = `
-      ${renderImageOrPlaceholder(firstImg, minH)}
-      ${hasMultiple ? `<div class="project-multi-badge" title="${p.images.length} imagens">⊕</div>` : ''}
-      <div class="project-cat-badge">${p.categoryLabel}</div>
+      ${renderImageOrPlaceholder(firstImg, 'card')}
+      ${firstImg.type === 'video' ? '<div class="project-video-badge">▶ Vídeo</div>' : ''}
       <div class="project-overlay">
         <div class="overlay-title">${p.title}</div>
         <div class="overlay-desc">${p.description.substring(0, 80)}...</div>
@@ -249,16 +266,26 @@ function openLightbox(id) {
   currentProject = project;
   currentSlide = 0;
   updateLightbox();
-  document.getElementById('lightbox').classList.add('open');
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('open');
+  lb.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
 
 function closeLightbox() {
+  // Pausa vídeo antes de fechar
+  const existingVideo = document.querySelector('#lbImgWrapper video');
+  if (existingVideo) existingVideo.pause();
+
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 }
 
 function updateLightbox() {
+  // Pausa vídeo antes de trocar slide
+  const existingVideo = document.querySelector('#lbImgWrapper video');
+  if (existingVideo) existingVideo.pause();
+
   const p = currentProject;
   const slide = p.images[currentSlide];
   const total = p.images.length;
@@ -284,17 +311,19 @@ function updateLightbox() {
     </div>
   `;
 
-  // Image
+  // Image / Video
   const wrapper = document.getElementById('lbImgWrapper');
-  wrapper.innerHTML = `
-    ${renderImageOrPlaceholder(slide, '420px')}
-  `;
+  wrapper.innerHTML = renderImageOrPlaceholder(slide, 'lightbox');
+
+  // Scroll lightbox back to top on slide change (mobile)
+  const lb = document.getElementById('lightbox');
+  lb.scrollTop = 0;
 
   // Nav buttons
   document.getElementById('lbPrev').disabled = currentSlide === 0;
   document.getElementById('lbNext').disabled = currentSlide === total - 1;
 
-  // Hide nav if single image
+  // Hide nav if single
   document.querySelector('.lb-nav').style.display = total > 1 ? 'flex' : 'none';
   document.getElementById('lbCounter').style.display = total > 1 ? 'block' : 'none';
 
@@ -302,28 +331,34 @@ function updateLightbox() {
   const dotsEl = document.getElementById('lbDots');
   dotsEl.innerHTML = '';
   if (total > 1) {
-    p.images.forEach((_, i) => {
+    p.images.forEach((img, i) => {
       const dot = document.createElement('button');
       dot.className = 'lb-dot' + (i === currentSlide ? ' active' : '');
       dot.setAttribute('aria-label', `Slide ${i + 1}`);
+      if (img.type === 'video') dot.setAttribute('title', '▶ Vídeo');
       dot.addEventListener('click', () => { currentSlide = i; updateLightbox(); });
       dotsEl.appendChild(dot);
     });
   }
 }
 
+// ===== LIGHTBOX EVENTS =====
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
+
 document.getElementById('lbPrev').addEventListener('click', () => {
   if (currentSlide > 0) { currentSlide--; updateLightbox(); }
 });
+
 document.getElementById('lbNext').addEventListener('click', () => {
   if (currentSlide < currentProject.images.length - 1) { currentSlide++; updateLightbox(); }
 });
 
+// Close on backdrop tap (only if tapping the lightbox itself, not children)
 document.getElementById('lightbox').addEventListener('click', (e) => {
   if (e.target === document.getElementById('lightbox')) closeLightbox();
 });
 
+// Keyboard nav
 document.addEventListener('keydown', (e) => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
   if (e.key === 'Escape') closeLightbox();
@@ -331,9 +366,39 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight' && currentSlide < currentProject.images.length - 1) { currentSlide++; updateLightbox(); }
 });
 
+// ===== TOUCH SWIPE for lightbox =====
+(function() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const lb = document.getElementById('lightbox');
+
+  lb.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  lb.addEventListener('touchend', (e) => {
+    if (!currentProject) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+
+    // Only trigger swipe if mostly horizontal and significant distance
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0 && currentSlide < currentProject.images.length - 1) {
+        currentSlide++;
+        updateLightbox();
+      } else if (dx > 0 && currentSlide > 0) {
+        currentSlide--;
+        updateLightbox();
+      }
+    }
+  }, { passive: true });
+})();
+
 // ===== RENDER CLIENTS =====
 function renderClients() {
   const grid = document.getElementById('clientsGrid');
+  if (!grid) return;
   clients.forEach(c => {
     const item = document.createElement('div');
     item.className = 'client-item';
@@ -393,7 +458,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 renderProjects();
 renderClients();
 
-// Re-observe after dynamic render
+// Re-observe dynamically rendered elements
 setTimeout(() => {
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }, 100);
