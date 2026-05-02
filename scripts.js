@@ -139,6 +139,7 @@ const projects = [
   platform: "Outdoor Digital / Tráfego Pago / Reels",
   colorClass: "p1",
   images: [
+    {src: "videos/reel-copa.mov", label: "Reel — Campanha Copa do Mundo", type: "video" },
     { src: "videos/black-animado.mp4", label: "Campanha Black — Animação", type: "video" },
     { src: "videos/ad-animado-mp4.mp4", label: "Ad Animado — Tráfego Pago", type: "video" },
     { src: "videos/outdoor-10anos-cabanas.mov", label: "Outdoor Digital — 10 Anos Cabanas", type: "video" },
