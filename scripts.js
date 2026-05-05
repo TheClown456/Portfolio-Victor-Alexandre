@@ -15,7 +15,8 @@ const projects = [
     {src: "images/copa2.png", label: "Post Feed — Performance (sem travamentos / velocidade)" },
     {src: "images/copa3.png", label: "Post Feed — Oferta (plano + canais inclusos)" },
     {src: "images/copa4.png", label: "Post Feed — Multiplataforma (assistir em qualquer tela)" },
-    {src: "images/copa6.png", label: "Post Feed — Experiência (imersão estilo estádio em casa)" }
+    {src: "images/copa6.png", label: "Post Feed — Experiência (imersão estilo estádio em casa)" },
+    {src: "videos/outdoor-copa2.mov", label: "Outdoor Digital", type: "video" }
   ]
 },
 {
@@ -159,14 +160,15 @@ const clients = [
   { name: "Sabor & Arte", init: "SA" },
 ];
 
-// ===== RENDER PLACEHOLDER / IMAGE / VIDEO =====
+// ===== RENDER IMAGE / VIDEO / PLACEHOLDER =====
+// context: 'card' | 'lightbox'
 function renderImageOrPlaceholder(imageObj, context) {
-  // context: 'card' | 'lightbox'
   const isLightbox = context === 'lightbox';
   const isVideo = imageObj.type === 'video';
 
   if (imageObj.src && isVideo) {
     if (isLightbox) {
+      // Lightbox: src definido aqui pois o vídeo só carrega ao abrir o modal
       return `<video
         src="${imageObj.src}"
         class="lb-img"
@@ -177,10 +179,10 @@ function renderImageOrPlaceholder(imageObj, context) {
         webkit-playsinline
       ></video>`;
     } else {
-      // Card thumbnail: no controls, just poster from first frame
+      // Card: preload="none" — zero bytes baixados antes do clique
       return `<video
         src="${imageObj.src}"
-        style="width:100%;height:100%;object-fit:cover;min-height:180px;background:#000;display:block;"
+        style="width:100%;height:100%;object-fit:cover;min-height:180px;background:#111;display:block;"
         preload="metadata"
         playsinline
         muted
@@ -188,9 +190,16 @@ function renderImageOrPlaceholder(imageObj, context) {
     }
   } else if (imageObj.src) {
     if (isLightbox) {
-      return `<img src="${imageObj.src}" alt="${imageObj.label}" class="lb-img">`;
+      return `<img src="${imageObj.src}" alt="${imageObj.label}" class="lb-img" loading="lazy" decoding="async">`;
     } else {
-      return `<img src="${imageObj.src}" alt="${imageObj.label}" style="width:100%;height:100%;object-fit:cover;min-height:180px;display:block;">`;
+      // Card: loading="lazy" + decoding="async" — só baixa ao entrar na viewport
+      return `<img
+        src="${imageObj.src}"
+        alt="${imageObj.label}"
+        loading="lazy"
+        decoding="async"
+        style="width:100%;height:100%;object-fit:cover;min-height:180px;display:block;"
+      >`;
     }
   } else {
     return `
@@ -208,18 +217,19 @@ function renderImageOrPlaceholder(imageObj, context) {
   }
 }
 
-// ===== RENDER PROJECTS =====
-function renderProjects(filter = 'all') {
-  const grid = document.getElementById('projectsGrid');
-  grid.innerHTML = '';
+// ===== LAZY CARD OBSERVER =====
+// Renderiza o conteúdo do card apenas quando ele entra na viewport
+// rootMargin de 300px garante pré-carregamento suave antes de aparecer
+const lazyCardObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
 
-  const filtered = filter === 'all' ? projects : projects.filter(p => p.category === filter);
+    const card = entry.target;
+    const id = parseInt(card.dataset.pendingId, 10);
+    if (!id) return;
 
-  filtered.forEach((p, i) => {
-    const card = document.createElement('div');
-    card.className = 'project-card';
-    card.dataset.id = p.id;
-    card.dataset.category = p.category;
+    const p = projects.find(x => x.id === id);
+    if (!p) return;
 
     const firstImg = p.images[0];
 
@@ -234,7 +244,32 @@ function renderProjects(filter = 'all') {
     `;
 
     card.addEventListener('click', () => openLightbox(p.id));
+    lazyCardObserver.unobserve(card);
+  });
+}, {
+  rootMargin: '300px 0px', // começa a renderizar 300px antes de entrar na tela
+  threshold: 0
+});
+
+// ===== RENDER PROJECTS =====
+function renderProjects(filter = 'all') {
+  const grid = document.getElementById('projectsGrid');
+  grid.innerHTML = '';
+
+  const filtered = filter === 'all' ? projects : projects.filter(p => p.category === filter);
+
+  filtered.forEach((p) => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.dataset.id = p.id;
+    card.dataset.category = p.category;
+    card.dataset.pendingId = p.id; // marcador para o observer
+
+    // Placeholder esqueleto enquanto não entra na viewport
+    card.innerHTML = `<div class="card-skeleton"></div>`;
+
     grid.appendChild(card);
+    lazyCardObserver.observe(card);
   });
 }
 
@@ -312,7 +347,7 @@ function updateLightbox() {
     </div>
   `;
 
-  // Image / Video
+  // Image / Video — src só é injetado aqui, evitando downloads antecipados
   const wrapper = document.getElementById('lbImgWrapper');
   wrapper.innerHTML = renderImageOrPlaceholder(slide, 'lightbox');
 
@@ -383,7 +418,6 @@ document.addEventListener('keydown', (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
 
-    // Only trigger swipe if mostly horizontal and significant distance
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
       if (dx < 0 && currentSlide < currentProject.images.length - 1) {
         currentSlide++;
