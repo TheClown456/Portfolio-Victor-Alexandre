@@ -186,7 +186,6 @@ function renderImageOrPlaceholder(imageObj, context) {
 
   if (imageObj.src && isVideo) {
     if (isLightbox) {
-      // Lightbox: src definido aqui pois o vídeo só carrega ao abrir o modal
       return `<video
         src="${imageObj.src}"
         class="lb-img"
@@ -197,7 +196,6 @@ function renderImageOrPlaceholder(imageObj, context) {
         webkit-playsinline
       ></video>`;
     } else {
-      // Card: preload="none" — zero bytes baixados antes do clique
       return `<video
         src="${imageObj.src}"
         style="width:100%;height:100%;object-fit:cover;min-height:180px;background:#111;display:block;"
@@ -210,7 +208,6 @@ function renderImageOrPlaceholder(imageObj, context) {
     if (isLightbox) {
       return `<img src="${imageObj.src}" alt="${imageObj.label}" class="lb-img" loading="lazy" decoding="async">`;
     } else {
-      // Card: loading="lazy" + decoding="async" — só baixa ao entrar na viewport
       return `<img
         src="${imageObj.src}"
         alt="${imageObj.label}"
@@ -235,9 +232,30 @@ function renderImageOrPlaceholder(imageObj, context) {
   }
 }
 
+// ===== PRELOAD LIGHTBOX SLIDES =====
+// Ao abrir o lightbox, pré-carrega todas as imagens do projeto em background.
+// Com webp em tamanho razoável, isso garante troca de slide instantânea.
+function preloadAllSlides(project) {
+  project.images.forEach(img => {
+    if (img.type === 'video' || !img.src) return;
+    const el = new Image();
+    el.src = img.src;
+  });
+}
+
+// Fallback: pré-carrega apenas os vizinhos (anterior e próximo).
+// Chamado em cada updateLightbox() como reforço caso preloadAllSlides
+// ainda não tenha terminado de baixar todas as imagens.
+function preloadNeighbors(project, currentIndex) {
+  [-1, 1].forEach(offset => {
+    const neighbor = project.images[currentIndex + offset];
+    if (!neighbor || neighbor.type === 'video' || !neighbor.src) return;
+    const el = new Image();
+    el.src = neighbor.src;
+  });
+}
+
 // ===== LAZY CARD OBSERVER =====
-// Renderiza o conteúdo do card apenas quando ele entra na viewport
-// rootMargin de 300px garante pré-carregamento suave antes de aparecer
 const lazyCardObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
@@ -265,7 +283,7 @@ const lazyCardObserver = new IntersectionObserver((entries) => {
     lazyCardObserver.unobserve(card);
   });
 }, {
-  rootMargin: '300px 0px', // começa a renderizar 300px antes de entrar na tela
+  rootMargin: '300px 0px',
   threshold: 0
 });
 
@@ -281,9 +299,8 @@ function renderProjects(filter = 'all') {
     card.className = 'project-card';
     card.dataset.id = p.id;
     card.dataset.category = p.category;
-    card.dataset.pendingId = p.id; // marcador para o observer
+    card.dataset.pendingId = p.id;
 
-    // Placeholder esqueleto enquanto não entra na viewport
     card.innerHTML = `<div class="card-skeleton"></div>`;
 
     grid.appendChild(card);
@@ -319,6 +336,10 @@ function openLightbox(id) {
   if (!project) return;
   currentProject = project;
   currentSlide = 0;
+
+  // ✅ CORREÇÃO: pré-carrega todas as imagens do projeto ao abrir o lightbox
+  preloadAllSlides(project);
+
   updateLightbox();
   const lb = document.getElementById('lightbox');
   lb.classList.add('open');
@@ -327,7 +348,6 @@ function openLightbox(id) {
 }
 
 function closeLightbox() {
-  // Pausa vídeo antes de fechar
   const existingVideo = document.querySelector('#lbImgWrapper video');
   if (existingVideo) existingVideo.pause();
 
@@ -336,7 +356,6 @@ function closeLightbox() {
 }
 
 function updateLightbox() {
-  // Pausa vídeo antes de trocar slide
   const existingVideo = document.querySelector('#lbImgWrapper video');
   if (existingVideo) existingVideo.pause();
 
@@ -349,7 +368,6 @@ function updateLightbox() {
   document.getElementById('lbDesc').textContent = p.description;
   document.getElementById('lbCounter').textContent = `${currentSlide + 1} / ${total}`;
 
-  // Meta
   document.getElementById('lbMeta').innerHTML = `
     <div class="lb-meta-item">
       <span class="lb-meta-key">Cliente</span>
@@ -365,23 +383,18 @@ function updateLightbox() {
     </div>
   `;
 
-  // Image / Video — src só é injetado aqui, evitando downloads antecipados
   const wrapper = document.getElementById('lbImgWrapper');
   wrapper.innerHTML = renderImageOrPlaceholder(slide, 'lightbox');
 
-  // Scroll lightbox back to top on slide change (mobile)
   const lb = document.getElementById('lightbox');
   lb.scrollTop = 0;
 
-  // Nav buttons
   document.getElementById('lbPrev').disabled = currentSlide === 0;
   document.getElementById('lbNext').disabled = currentSlide === total - 1;
 
-  // Hide nav if single
   document.querySelector('.lb-nav').style.display = total > 1 ? 'flex' : 'none';
   document.getElementById('lbCounter').style.display = total > 1 ? 'block' : 'none';
 
-  // Dots
   const dotsEl = document.getElementById('lbDots');
   dotsEl.innerHTML = '';
   if (total > 1) {
@@ -394,6 +407,9 @@ function updateLightbox() {
       dotsEl.appendChild(dot);
     });
   }
+
+  // ✅ CORREÇÃO: reforça o preload dos vizinhos a cada troca de slide
+  preloadNeighbors(p, currentSlide);
 }
 
 // ===== LIGHTBOX EVENTS =====
@@ -407,12 +423,10 @@ document.getElementById('lbNext').addEventListener('click', () => {
   if (currentSlide < currentProject.images.length - 1) { currentSlide++; updateLightbox(); }
 });
 
-// Close on backdrop tap (only if tapping the lightbox itself, not children)
 document.getElementById('lightbox').addEventListener('click', (e) => {
   if (e.target === document.getElementById('lightbox')) closeLightbox();
 });
 
-// Keyboard nav
 document.addEventListener('keydown', (e) => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
   if (e.key === 'Escape') closeLightbox();
@@ -511,7 +525,6 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 renderProjects();
 renderClients();
 
-// Re-observe dynamically rendered elements
 setTimeout(() => {
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }, 100);
