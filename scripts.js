@@ -11,12 +11,12 @@ const projects = [
   platform: "Instagram (Feed e Ads)",
   colorClass: "p1",
   images: [
-    {src: "images/copa1.png", label: "Post Feed — Awareness (conceito geral da campanha)" },
-    {src: "images/copa2.png", label: "Post Feed — Performance (sem travamentos / velocidade)" },
-    {src: "images/copa3.png", label: "Post Feed — Oferta (plano + canais inclusos)" },
-    {src: "images/copa4.png", label: "Post Feed — Multiplataforma (assistir em qualquer tela)" },
-    {src: "images/copa6.png", label: "Post Feed — Experiência (imersão estilo estádio em casa)" },
-    {src: "videos/outdoor-copa2.mov", label: "Outdoor Digital", type: "video" }
+    {src: "images/copa1.webp", label: "Post Feed — Awareness (conceito geral da campanha)" },
+    {src: "images/copa2.webp", label: "Post Feed — Performance (sem travamentos / velocidade)" },
+    {src: "images/copa3.webp", label: "Post Feed — Oferta (plano + canais inclusos)" },
+    {src: "images/copa4.webp", label: "Post Feed — Multiplataforma (assistir em qualquer tela)" },
+    {src: "images/copa6.webp", label: "Post Feed — Experiência (imersão estilo estádio em casa)" },
+    {src: "videos/outdoor-copav2.mov", label: "Outdoor Digital", type: "video" }
   ]
 },
 {
@@ -30,9 +30,9 @@ const projects = [
   platform: "Instagram",
   colorClass: "p7",
   images: [
-    {src: "images/prova-social.png", label: "Post Feed — Prova social" },
-    {src: "images/ja-reiniciou.png", label: "Post Feed — Conteúdo educativo" },
-    {src: "images/watch.jpg", label: "Post Feed — Watch" }
+    {src: "images/prova-social.webp", label: "Post Feed — Prova social" },
+    {src: "images/ja-reiniciou.webp", label: "Post Feed — Conteúdo educativo" },
+    {src: "images/watch.webp", label: "Post Feed — Watch" }
   ]
 },
 {
@@ -46,9 +46,9 @@ const projects = [
   platform: "Instagram / Google Ads",
   colorClass: "p8",
   images: [
-    {src: "images/planos.jpg", label: "Post Feed — Oferta" },
-    {src: "images/planos-comemorativos.png", label: "Post Feed — Campanha Promocional" },
-    {src: "images/black.png", label: "Post Feed — Campanha Black November" }
+    {src: "images/planos.webp", label: "Post Feed — Oferta" },
+    {src: "images/planos-comemorativos.webp", label: "Post Feed — Campanha Promocional" },
+    {src: "images/black.webp", label: "Post Feed — Campanha Black November" }
   ]
 },
 {
@@ -62,10 +62,10 @@ const projects = [
   platform: "Instagram",
   colorClass: "p1",
   images: [
-    {src: "images/indicacao_01.jpg", label: "Carrossel — Hook inicial" },
-    {src: "images/indicacao_02.jpg", label: "Carrossel — Explicação do processo" },
-    {src: "images/indicacao_03.jpg", label: "Carrossel — Etapa de ativação" },
-    {src: "images/indicacao_04.jpg", label: "Carrossel — Benefício e CTA" }
+    {src: "images/indicacao_01.webp", label: "Carrossel — Hook inicial" },
+    {src: "images/indicacao_02.webp", label: "Carrossel — Explicação do processo" },
+    {src: "images/indicacao_03.webp", label: "Carrossel — Etapa de ativação" },
+    {src: "images/indicacao_04.webp", label: "Carrossel — Benefício e CTA" }
   ]
 },
 {
@@ -79,9 +79,9 @@ const projects = [
   platform: "Instagram",
   colorClass: "p8",
   images: [
-    {src: "images/mito-ou-verdade_01.jpg", label: "Capa do carrossel" },
-    {src: "images/mito-ou-verdade_02.jpg", label: "Explicação do mito" },
-    {src: "images/mito-ou-verdade_03.jpg", label: "Solução + CTA" }
+    {src: "images/mito-ou-verdade_01.webp", label: "Capa do carrossel" },
+    {src: "images/mito-ou-verdade_02.webp", label: "Explicação do mito" },
+    {src: "images/mito-ou-verdade_03.webp", label: "Solução + CTA" }
   ]
 },
 {
@@ -95,9 +95,9 @@ const projects = [
   platform: "Instagram",
   colorClass: "p8",
   images: [
-    {src: "images/dia-trabalhador.png", label: "Dia do Trabalhador" },
-    {src: "images/dia-mulher.png", label: "Dia da Mulher" },
-    {src: "images/dia-das-maes.png", label: "Dia das Mães" }
+    {src: "images/dia-trabalhador.webp", label: "Dia do Trabalhador" },
+    {src: "images/dia-mulher.webp", label: "Dia da Mulher" },
+    {src: "images/dia-das-maes.webp", label: "Dia das Mães" }
   ]
 },
 {
@@ -111,7 +111,8 @@ const projects = [
   platform: "Impressão / Divulgação Local",
   colorClass: "p8",
   images: [
-    { src: "images/panfleto-interouro.png", label: "Panfleto promocional" }
+    { src: "images/panfleto-interouro.webp", label: "Panfleto promocional" },
+    { src: "images/panfleto-interouro2.webp", label: "Verso" },
   ]
 },
 {
@@ -125,8 +126,8 @@ const projects = [
   platform: "Frota / Mídia Offline",
   colorClass: "p8",
   images: [
-    { src: "images/modelo2-mock2.png", label: "Aplicação em mockup" },
-    { src: "images/modelo2.png", label: "Estudo de layout da plotagem" }
+    { src: "images/modelo2-mock2.webp", label: "Aplicação em mockup" },
+    { src: "images/modelo2.webp", label: "Estudo de layout da plotagem" }
   ]
 },
 {
@@ -145,6 +146,23 @@ const projects = [
     { src: "videos/ad-animado-mp4.mp4", label: "Ad Animado — Tráfego Pago", type: "video" },
     { src: "videos/outdoor-10anos-cabanas.mov", label: "Outdoor Digital — 10 Anos Cabanas", type: "video" },
     { src: "videos/outdoor-cabanas.mov", label: "Outdoor Digital — Cabanas", type: "video" }
+  ]
+},
+{
+  id: 10,
+  title: "Interouro — Campanha de Aniversário",
+  category: "ads",
+  categoryLabel: "Anúncios",
+  description: "Carrossel desenvolvido pra gerar identificação usando a nostalgia dos clientes que acompanharam a evolução da internet ao longo dos anos.",
+  client: "Interouro Telecom",
+  year: "2026",
+  platform: "Social Media",
+  colorClass: "p1",
+  images: [
+    { src: "images/nostalgia_01.jpg (1).webp", label: "Carrossel-nostalgia" },
+    { src: "images/nostalgia_02.jpg (1).webp", label: "Carrossel-nostalgia" },
+    { src: "images/nostalgia_03.jpg (1).webp", label: "Carrossel-nostalgia" },
+    { src: "images/nostalgia_04.jpg (1).webp", label: "Carrossel-nostalgia" }
   ]
 },
 ];
