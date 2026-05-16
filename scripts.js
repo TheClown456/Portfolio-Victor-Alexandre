@@ -208,10 +208,12 @@ function renderImageOrPlaceholder(imageObj, context) {
     if (isLightbox) {
       return `<img src="${imageObj.src}" alt="${imageObj.label}" class="lb-img" loading="lazy" decoding="async">`;
     } else {
+      // ✅ CORREÇÃO: eager + async garante que o browser baixa assim que
+      // o elemento é criado, sem esperar a imagem entrar na viewport
       return `<img
         src="${imageObj.src}"
         alt="${imageObj.label}"
-        loading="lazy"
+        loading="eager"
         decoding="async"
         style="width:100%;height:100%;object-fit:cover;min-height:180px;display:block;"
       >`;
@@ -524,6 +526,15 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 // ===== INIT =====
 renderProjects();
 renderClients();
+
+// ✅ CORREÇÃO: pré-carrega todas as thumbnails dos cards no init,
+// antes mesmo do usuário chegar na galeria
+projects.forEach(p => {
+  const first = p.images[0];
+  if (first.type === 'video' || !first.src) return;
+  const el = new Image();
+  el.src = first.src;
+});
 
 setTimeout(() => {
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
