@@ -125,23 +125,6 @@ const projects = [
 },
 {
   id: 9,
-  title: "Interouro — Motion & Animação",
-  category: "ads",
-  categoryLabel: "Motion Design",
-  description: "Peças animadas desenvolvidas para diferentes mídias e momentos da Interouro, incluindo outdoor digital, campanhas de tráfego pago e Reels. Cada vídeo foi criado com linguagem visual adaptada ao canal, combinando movimento, tipografia e identidade da marca para maximizar impacto e retenção.",
-  client: "Interouro Telecom",
-  year: "2025",
-  platform: "Outdoor Digital / Tráfego Pago / Reels",
-  colorClass: "p1",
-  images: [
-    { src: "videos/black-animado.mp4", label: "Campanha Black — Animação", type: "video" },
-    { src: "videos/ad-animado-mp4.mp4", label: "Ad Animado — Tráfego Pago", type: "video" },
-    { src: "videos/outdoor-10anos-cabanas.mov", label: "Outdoor Digital — 10 Anos Cabanas", type: "video" },
-    { src: "videos/outdoor-cabanas.mov", label: "Outdoor Digital — Cabanas", type: "video" }
-  ]
-},
-{
-  id: 10,
   title: "Interouro — Campanha de Aniversário",
   category: "ads",
   categoryLabel: "Anúncios",
