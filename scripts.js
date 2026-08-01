@@ -2,21 +2,16 @@
 const projects = [
 {
   id: 1,
-  title: "Campanha Copa do Mundo — Interouro + Watch",
+  title: "Sorteio de dia dos pais",
   category: "social",
   categoryLabel: "Social Media",
-  description: "Campanha para redes sociais focada em posicionar a Interouro como a melhor opção para assistir aos jogos sem travamentos. A comunicação destaca velocidade, estabilidade e acesso aos canais oficiais, com visual imersivo e CTAs diretos voltados para conversão.",
+  description: "Post pro instagram referente a um sorteio de dia dos pais, com objetivo de aumentar o engajamento da página e número de seguidores",
   client: "Interouro Provedor de Internet",
   year: "2026",
-  platform: "Instagram (Feed e Ads)",
+  platform: "Instagram (Feed)",
   colorClass: "p1",
   images: [
-    {src: "images/copa1.webp", label: "Post Feed — Awareness (conceito geral da campanha)" },
-    {src: "images/copa2.webp", label: "Post Feed — Performance (sem travamentos / velocidade)" },
-    {src: "images/copa3.webp", label: "Post Feed — Oferta (plano + canais inclusos)" },
-    {src: "images/copa4.webp", label: "Post Feed — Multiplataforma (assistir em qualquer tela)" },
-    {src: "images/copa6.webp", label: "Post Feed — Experiência (imersão estilo estádio em casa)" },
-    {src: "videos/outdoor-copav2.mov", label: "Outdoor Digital", type: "video" }
+    {src: "images/sorteio.webp", label: "Post Feed — Sorteio de dia dos pais)" },
   ]
 },
 {
@@ -86,18 +81,16 @@ const projects = [
 },
 {
   id: 6,
-  title: "InterOuro — Datas Comemorativas",
-  category: "social",
-  categoryLabel: "Social Media",
-  description: "Posts institucionais desenvolvidos para datas comemorativas, reforçando o posicionamento da marca através de mensagens emocionais e consistência visual.",
+  title: "InterOuro — Wifeed",
+  category: "branding",
+  categoryLabel: "Branding",
+  description: "Banner de hotspot de wi-fi, aparece no celular de cada pessoa que tenta se conectar a rede wi-fi pública, criado de forma responsiva pra que tenha exibição correta em qualquer dispositivo.",
   client: "InterOuro",
-  year: "2025",
+  year: "2026",
   platform: "Instagram",
   colorClass: "p8",
   images: [
-    {src: "images/dia-trabalhador.webp", label: "Dia do Trabalhador" },
-    {src: "images/dia-mulher.webp", label: "Dia da Mulher" },
-    {src: "images/dia-das-maes.webp", label: "Dia das Mães" }
+    {src: "images/wifeed.webp", label: "Dia do Trabalhador" }
   ]
 },
 {
